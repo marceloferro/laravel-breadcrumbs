@@ -101,20 +101,26 @@ class Manager {
 		return $this->view->render($this->viewName, $breadcrumbs);
 	}
 
-	public function renderIfExists($name = null)
-	{
-		if (is_null($name))
-			list($name, $params) = $this->currentRoute->get();
-		else
-			$params = array_slice(func_get_args(), 1);
+    public function renderIfExists($name = null)
+    {
+        if (is_null($name)) {
+            try {
+                list($name, $params) = $this->currentRoute->get();
+            } catch (\Exception $e) {
+                return '';
+            }
+        } else {
+            $params = array_slice(func_get_args(), 1);
+        }
 
-		if (!$this->exists($name))
-			return '';
+        if (!$this->exists($name)) {
+            return '';
+        }
 
-		$breadcrumbs = $this->generator->generate($this->callbacks, $name, $params);
+        $breadcrumbs = $this->generator->generate($this->callbacks, $name, $params);
 
-		return $this->view->render($this->viewName, $breadcrumbs);
-	}
+        return $this->view->render($this->viewName, $breadcrumbs);
+    }
 
 	public function renderIfExistsArray($name, $params = [])
 	{
